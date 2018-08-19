@@ -8,5 +8,5 @@ This is very much work in progress, so please don't try to use it just yet!
 ## Usage
 
 ```sh
-$ stub my-dope-project
+$ stub
 ```
