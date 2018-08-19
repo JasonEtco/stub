@@ -13,23 +13,19 @@ const spawn = require('cross-spawn')
 const DEFAULT_TEMPLATE = 'https://github.com/JasonEtco/stub-template'
 
 program
-  .usage('[options] [destination]')
+  .usage('[options]')
   .option('-t, --title <title>', 'Title')
   .option('-d, --desc "<description>"', 'Description (contain in quotes)').parse(process.argv)
   .option('-b, --branch <branch-name>', 'Specify a branch', 'master')
   .option('--template <template-url>', 'URL or name of custom template', DEFAULT_TEMPLATE)
 
-if (!program.args.length) throw new Error('You must include a destination.')
-const project = program.args[program.args.length - 1]
-const destination = program.args.length
-  ? path.resolve(process.cwd(), program.args.shift())
-  : process.cwd()
-
 async function go (prompts) {
   const answers = await inquirer.prompt(prompts)
 
-  answers.project = kebabCase(project)
-  answers.projectSlug = camelCase(project)
+  answers.project = kebabCase(answers.title)
+  answers.projectSlug = camelCase(answers.title)
+
+  const destination = path.resolve(process.cwd(), answers.project)
 
   const results = await scaffold(program.template, destination, answers, {
     overwrite: Boolean(program.overwrite),
@@ -58,7 +54,6 @@ go([
   {
     type: 'input',
     name: 'title',
-    default: () => kebabCase(project),
     message: 'Title:',
     when: !program.title
   }, {
